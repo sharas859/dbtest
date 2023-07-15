@@ -107,6 +107,14 @@ def query_timestamps(start_timestamp, end_timestamp):
 def query_chunks(db, name, start_x=None, end_x=None, start_t=None, end_t=None):
     conn = sq.connect(db)
     cursor = conn.cursor()
+
+    # check if table exists
+    table_exists = cursor.execute(
+        f'''SELECT count(*) FROM sqlite_master WHERE type='table' AND name='{name}' ''').fetchone()[0] == 1
+    if not table_exists:
+        print(f'Table {name} does not exist\n')
+        return
+
     # get chunk names from chunk index
     if start_x is None or end_x is None:
         cursor.execute(
@@ -137,10 +145,13 @@ def unpickle_chunks(chunks):
 
 
 def unpickle_data(data):
-    unpickled = [unpickle_chunks(row) for row in data]
-    unpickled = [[item for chunk in row for item in chunk]
-                 for row in unpickled]
-    return unpickled
+    try:
+        unpickled = [unpickle_chunks(row) for row in data]
+        unpickled = [[item for chunk in row for item in chunk]
+                     for row in unpickled]
+        return unpickled
+    except:
+        print("no data to unpickle")
 
 
 def get_data(db, name, start_x=None, end_x=None, start_t=None, end_t=None):
@@ -151,7 +162,10 @@ def get_data(db, name, start_x=None, end_x=None, start_t=None, end_t=None):
 
 
 def print_dimensions(name, data):
-    print(f'Name: {name}')
-    print(f'Number of rows: {len(data)}')
-    print(f'Number of columns: {len(data[0])}')
-    print('-------------------')
+    try:
+        print(f'Name: {name}')
+        print(f'Number of rows: {len(data)}')
+        print(f'Number of columns: {len(data[0])}')
+        print('-------------------')
+    except:
+        print("no data to print")
