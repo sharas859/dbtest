@@ -4,6 +4,12 @@ import os
 
 
 def main():
+
+    if not os.path.exists('./db'):
+        os.makedirs('./db')
+    if not os.path.exists('./data'):
+        os.makedirs('./data')
+
     db = './db/measurements.db'
     csv = './data/'
 
