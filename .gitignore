@@ -2,6 +2,9 @@
 *.csv
 *.tsv
 *.db
+*.TSV
+*.CSV
+*.DB
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
