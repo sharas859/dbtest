@@ -31,7 +31,6 @@ def main():
     CSVtoDB.print_dimensions('no limits', unpickled0)
     CSVtoDB.print_dimensions('x limit', unpickled1)
     CSVtoDB.print_dimensions('x + t limit', unpickled2)
-    print('test')
 
 
 if __name__ == '__main__':
