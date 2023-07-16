@@ -17,6 +17,11 @@ def main():
         if file.endswith('.csv') or file.endswith('.tsv'):
             CSVtoDB.csv_to_db(db, csv + file)
 
+    tests = CSVtoDB.get_test_names(db)
+    for test in tests:
+        print("\n" + str(CSVtoDB.get_metadata(db, test[0])) + "\n")
+        CSVtoDB.print_dimensions(test[0], CSVtoDB.get_data(db, test[0]))
+
     unpickled0 = CSVtoDB.get_data(db, '20220907 Nachmessung Bauteil 5&6')
     unpickled1 = CSVtoDB.get_data(
         db, '20220907 Nachmessung Bauteil 5&6', 1.5, 2.5)

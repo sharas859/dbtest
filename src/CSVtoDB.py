@@ -24,6 +24,18 @@ def metadata_to_db(db, metadata):
     # ----------------
     coulmn_names = [row[0] for row in metadata]
     metadata_values = [row[1] for row in metadata]
+
+    # check if table exists
+    table_exists = cursor.execute(
+        f'''SELECT count(*) FROM sqlite_master WHERE type='table' AND name='metadata' ''').fetchone()[0] == 1
+    if table_exists:
+        test_name = metadata_values[0]
+        test_name_exists = cursor.execute(
+            f'''SELECT count(*) FROM metadata WHERE "Test Name:" = '{test_name}' ''').fetchone()[0] > 0
+        if test_name_exists:
+            print(f'Test {test_name} already exists\n')
+            return
+
     metadata_table_string = f'''CREATE TABLE IF NOT EXISTS metadata
                     ({', '.join([f'"{col}" TEXT' for col in coulmn_names])})'''
     cursor.execute(metadata_table_string)
@@ -158,6 +170,26 @@ def get_data(db, name, start_x=None, end_x=None, start_t=None, end_t=None):
     chunks = query_chunks(db, name, start_x, end_x, start_t, end_t)
     data = unpickle_data(chunks)
     # find a way to trim x values outside boundaries from start and end
+    return data
+
+
+def get_test_names(db):
+    conn = sq.connect(db)
+    cursor = conn.cursor()
+    cursor.execute(
+        f'''SELECT "Test Name:" FROM metadata''')
+    data = cursor.fetchall()
+    conn.close()
+    return data
+
+
+def get_metadata(db, name):
+    conn = sq.connect(db)
+    cursor = conn.cursor()
+    cursor.execute(
+        f'''SELECT * FROM metadata WHERE "Test Name:" = '{name}' ''')
+    data = cursor.fetchall()
+    conn.close()
     return data
 
 
